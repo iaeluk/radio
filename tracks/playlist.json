@@ -1,0 +1,14 @@
+{
+  "station": "radio",
+  "name": "radio",
+  "tracks": [
+    {
+      "title": "Stand By Me (Ao Vivo Em São Paulo)",
+      "artist": "Pericles",
+      "file": "Pericles - Stand By Me (Ao Vivo Em São Paulo).mp3",
+      "slug": "stand-by-me-ao-vivo-em-sao-paulo",
+      "kind": "playlist",
+      "key": "playlist/stand-by-me-ao-vivo-em-sao-paulo"
+    }
+  ]
+}

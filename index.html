@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+
+<!-- page:head -->
+<title>radio radio</title>
+<meta name="description" content="A radio that plays itself, one song at a time.">
+<link rel="canonical" href="https://iaeluk.github.io/radio/">
+<!-- /page:head -->
+
+<!-- What this page is, for the engines that read that, and — on the page
+     behind a permalink — the item itself, so it can start playing on the
+     first tick rather than after a fetch. Written by tools/build.py. -->
+<!-- page:data -->
+
+<!-- /page:data -->
+
+<meta name="theme-color" content="#0a0b0a">
+
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="radio">
+<meta name="color-scheme" content="dark light">
+<meta name="author" content="radio">
+
+<meta property="og:title" content="radio">
+<meta property="og:description" content="A radio that plays itself, one song at a time.">
+<meta property="og:url" content="https://iaeluk.github.io/radio/">
+<meta property="og:type" content="website">
+<meta name="twitter:title" content="radio">
+<meta name="twitter:description" content="A radio that plays itself, one song at a time.">
+
+<link rel="icon" href="assets/images/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="assets/images/favicon-32.png" sizes="32x32" type="image/png">
+<link rel="apple-touch-icon" href="assets/images/apple-touch-icon.png">
+
+<link rel="preload" href="assets/fonts/jetbrains-mono-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="assets/fonts/vt323-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="assets/fonts/space-grotesk-latin.woff2" as="font" type="font/woff2" crossorigin>
+
+<link rel="stylesheet" href="assets/css/fonts.css">
+<link rel="stylesheet" href="assets/css/style.css">
+
+<script>
+/* Sets the canvas fit factor before first paint so the layout never snaps (CLS). */
+(function () {
+  var w = innerWidth, h = innerHeight;
+  var f = w <= 900 ? 1 : Math.max(0.2, Math.min(1, (w - 40) / 1180, (h - 40) / 880));
+  document.documentElement.style.setProperty('--fit', f);
+})();
+</script>
+</head>
+<body>
+
+<div class="stage">
+  <canvas class="bg" id="bg" aria-hidden="true"></canvas>
+
+  <div class="fit" id="fit">
+  <div class="app" id="app">
+
+    <header class="bar">
+      <div class="bar-l">
+        <a class="mark" href="index.html" aria-label="radio, the front of the deck">
+          <svg class="logo" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 15 15" fill="currentColor"><path d="M0 0h15v1h-15z"/><path d="M0 1h1v14h-1z"/><path d="M7 1h1v2h-1z"/><path d="M14 1h1v14h-1z"/><path d="M2 2h5v1h-5z"/><path d="M11 2h2v1h-2z"/><path d="M2 3h1v10h-1z"/><path d="M12 3h1v10h-1z"/><path d="M1 7h1v1h-1z"/><path d="M3 12h9v1h-9z"/><path d="M7 13h1v2h-1z"/><path d="M1 14h6v1h-6z"/><path d="M9 14h5v1h-5z"/></svg>
+          <h1 class="wordmark">radio</h1>
+        </a>
+      </div>
+      <div class="bar-r">
+        <p class="tagline">each song a file in this repo</p>
+      </div>
+    </header>
+
+    <div class="row-top">
+
+
+      <div class="deck">
+
+        <section class="lcd" aria-label="Now playing">
+          <div class="scan" aria-hidden="true"></div>
+          <div class="lcd-top">
+            <span id="stationLabel">radio &middot; playlist</span>
+            <span id="srcLabel">playlist</span>
+          </div>
+          <div class="marq-clip">
+            <div class="marq" id="marq">
+              <span class="marq-txt">radio &#8212; playlist</span>
+              <span class="marq-txt" aria-hidden="true">radio &#8212; playlist</span>
+            </div>
+          </div>
+          <div class="lcd-bot">
+            <p class="artist" id="artist">playlist</p>
+            <p class="clock">
+              <span class="cur" id="curTime">00:00</span>
+              <span class="dur">/ <span id="durTime">--:--</span></span>
+            </p>
+          </div>
+          <div class="vis" id="vis" aria-hidden="true"></div>
+        </section>
+
+        <section class="transport" aria-label="Playback controls">
+          <div class="tbtns">
+            <button type="button" class="tb" id="prev" aria-label="Previous track">&#9664;&#9664;</button>
+            <button type="button" class="tb tb-play" id="toggle" aria-label="Play or pause"><span id="playGlyph">&#9654;</span></button>
+            <button type="button" class="tb" id="stop" aria-label="Stop">&#9632;</button>
+            <button type="button" class="tb" id="next" aria-label="Next track">&#9654;&#9654;</button>
+            <button type="button" class="tb tb-tog" id="shuffleBtn" aria-label="Shuffle" aria-pressed="false">&#8646;</button>
+            <button type="button" class="tb tb-tog" id="repeatBtn" aria-label="Repeat" aria-pressed="false">&#8635;</button>
+          </div>
+
+          <div class="seek" id="seek" role="slider" tabindex="0" aria-label="Seek" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+            <div class="seek-track">
+              <div class="seek-fill" id="seekFill"></div>
+              <div class="seek-head" id="seekHead"></div>
+            </div>
+          </div>
+
+          <div class="knobs">
+            <div class="knob-wrap">
+              <span class="knob-lbl">vol</span>
+              <div class="knob" id="volKnob" role="slider" tabindex="0" aria-label="Volume" aria-valuemin="0" aria-valuemax="100" aria-valuenow="80">
+                <div class="knob-rot" id="volRot"><span class="knob-tick"></span></div>
+              </div>
+              <span class="knob-val" id="volLabel">80</span>
+            </div>
+          </div>
+        </section>
+
+      </div>
+    </div>
+
+    <div class="row-bot">
+
+      <section class="playlist" aria-label="Playlist">
+        <div class="panel-head">
+          <h2 class="panel-title"><!-- page:panel -->
+<span id="playlistKind">playlist</span> &#8212; <span id="playlistName">radio</span>
+<!-- /page:panel --></h2>
+          <div class="head-btns">
+            <div class="seg" id="seg">
+<!-- page:tabs -->
+<a class="seg-b is-on" id="tabSongs" href="playlist/" aria-current="page">songs</a>
+              <a class="seg-b" id="tabPodcast" href="podcast/">podcast</a>
+<!-- /page:tabs -->
+            </div>
+            <button type="button" class="back lyr" id="lyricsBtn" aria-expanded="false" aria-controls="lyricsBox" hidden>lyrics</button>
+          </div>
+        </div>
+        <div class="tr-head" id="trHead">
+          <span>#</span>
+          <span>title</span>
+          <span class="ta-r">state</span>
+        </div>
+        <ul class="tracks" id="tracks">
+<!-- page:list -->
+<li><a class="track" href="playlist/stand-by-me-ao-vivo-em-sao-paulo.html"><span class="tr-n">01</span><span class="tr-t"><span class="tr-line"><span class="tr-title">Stand By Me (Ao Vivo Em São Paulo)</span></span><span class="tr-artist">Pericles</span></span><span class="tr-s"><span class="tr-st"></span></span></a><a class="tr-link" href="playlist/stand-by-me-ao-vivo-em-sao-paulo.html" title="Permalink &#8212; press to copy">#</a></li>
+<!-- /page:list -->
+        </ul>
+        <div class="lyr-box" id="lyricsBox" hidden>
+          <ol class="lyrics" id="lyrics"></ol>
+        </div>
+        <p class="panel-note" id="playlistNote"><!-- page:note -->
+1 track, on repeat
+<!-- /page:note --></p>
+      </section>
+    </div>
+
+    <footer class="foot">
+      <p class="status"><span class="pulse" aria-hidden="true"></span><span id="status">ready</span></p>
+      <div class="picker">
+        <button type="button" class="picker-btn" id="themeBtn" aria-expanded="false" aria-controls="themeMenu" aria-haspopup="listbox">
+          <span class="picker-name">
+            <span class="sw-ac" aria-hidden="true"></span>
+            <span id="skinName">green</span>
+          </span>
+          <span class="caret" id="themeCaret" aria-hidden="true">&#9660;</span>
+        </button>
+        <ul class="menu" id="themeMenu" role="listbox" aria-label="Colour theme" hidden></ul>
+      </div>
+      <button type="button" class="install" id="installBtn" hidden>install app</button>
+    </footer>
+
+  </div>
+  </div>
+</div>
+
+<noscript>
+  <div class="noscript">
+    <h2>radio needs JavaScript to play</h2>
+    <p>The deck plays the playlist in the browser. Every song is a file in the repo, so the list below links straight to them, and any media player will do.</p>
+  </div>
+</noscript>
+
+<script src="assets/js/app.js" defer></script>
+</body>
+</html>

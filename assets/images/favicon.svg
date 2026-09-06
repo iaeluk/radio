@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Omarchy Radio">
+  <title>Omarchy Radio</title>
+  <rect width="64" height="64" fill="#0a0b0a"/>
+  <rect x="2" y="2" width="60" height="60" fill="none" stroke="#23261f" stroke-width="2"/>
+  <g fill="#5ef2a0">
+    <rect x="9"  y="28" width="8" height="22"/>
+    <rect x="23" y="14" width="8" height="36"/>
+    <rect x="37" y="24" width="8" height="26"/>
+    <rect x="51" y="19" width="6" height="31"/>
+  </g>
+</svg>
