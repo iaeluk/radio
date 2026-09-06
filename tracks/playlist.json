@@ -3,12 +3,12 @@
   "name": "radio",
   "tracks": [
     {
-      "title": "Heaven (Official Music Video) - Bryan Adams (youtube)",
+      "title": "Heaven (Official Music Video)",
       "artist": "Bryan Adams",
-      "file": "Bryan Adams - Heaven (Official Music Video) - Bryan Adams (youtube).mp3",
-      "slug": "heaven-official-music-video-bryan-adams-youtube",
+      "file": "Bryan Adams - Heaven (Official Music Video).mp3",
+      "slug": "heaven-official-music-video",
       "kind": "playlist",
-      "key": "playlist/heaven-official-music-video-bryan-adams-youtube"
+      "key": "playlist/heaven-official-music-video"
     },
     {
       "title": "Stand By Me (Ao Vivo Em São Paulo)",
